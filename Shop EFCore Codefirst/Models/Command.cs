@@ -14,5 +14,7 @@ namespace Shop_EFCore_Codefirst.Models
         public virtual Customer Customer { get; set; }
 
         public virtual ICollection<CommandProduct> CommandProducts { get; set; }
+
+       
     }
 }

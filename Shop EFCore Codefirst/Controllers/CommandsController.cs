@@ -11,24 +11,39 @@ namespace Shop_EFCore_Codefirst.Controllers
     {
 
         private readonly Services.IShopDbServices<Models.Command> shopDbService;
+        private readonly Services.IShopDbServices<Models.Customer> shopDbServiceCustomer;
+        private ViewModels.CommandsViewModel CommandsViewModel;
 
-        public CommandsController(Services.IShopDbServices<Models.Command> _shopDbService)
+
+        public CommandsController(Services.IShopDbServices<Models.Command> _shopDbService, Services.IShopDbServices<Models.Customer> _shopDbServiceCustomer)
         {
             shopDbService = _shopDbService;
+            shopDbServiceCustomer = _shopDbServiceCustomer;
+            CommandsViewModel = new ViewModels.CommandsViewModel();
         }
 
         // GET: CommandsController
         public async Task<ActionResult> Index()
         {
-            var command = await shopDbService.GetAllAsync();
-            return View(command);
+            //var command = await shopDbService.GetAllAsync();
+            //return View(command);
+
+            CommandsViewModel.Customers = await shopDbServiceCustomer.GetAllAsync();          // Avec un viewmodel
+            CommandsViewModel.Commands = await shopDbService.GetAllAsync();
+            return View(CommandsViewModel);
+
         }
 
         // GET: CommandsController/Details/5
         public async Task<ActionResult> Details(Guid id)
         {
-            var command = await shopDbService.GetByIdAsync(id);
-            return View(command);
+            //var command = await shopDbService.GetByIdAsync(id);
+            //return View(command);
+
+            CommandsViewModel.SingleCommand = await shopDbService.GetByIdAsync(id);           // Avec un viewmodel
+            CommandsViewModel.SingleCustomer = await shopDbServiceCustomer.GetByIdAsync(CommandsViewModel.SingleCommand.CustomerId);
+
+            return View(CommandsViewModel);
         }
 
         // GET: CommandsController/Create
@@ -55,19 +70,25 @@ namespace Shop_EFCore_Codefirst.Controllers
         // GET: CommandsController/Edit/5
         public async Task<ActionResult> Edit(Guid id)
         {
-            var command = await shopDbService.GetByIdAsync(id);
-            return View(command);
+            //var command = await shopDbService.GetByIdAsync(id);
+            //return View(command);
+
+            CommandsViewModel.SingleCommand = await shopDbService.GetByIdAsync(id);           // Avec un viewmodel
+            //CommandsViewModel.SingleCustomer = await shopDbServiceCustomer.GetByIdAsync(CommandsViewModel.SingleCommand.CustomerId);
+            CommandsViewModel.Customers = await shopDbServiceCustomer.GetAllAsync();
+
+            return View(CommandsViewModel);
         }
 
         // POST: CommandsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(Models.Command command)
+        public async Task<ActionResult> Edit(ViewModels.CommandsViewModel commandsViewModel)
         {
             if (ModelState.IsValid)
             {
-                await shopDbService.UpdateAsync(command);
-                return RedirectToAction(nameof(Details), new { id = command.Id });
+                await shopDbService.UpdateAsync(commandsViewModel.SingleCommand);
+                return RedirectToAction(nameof(Details), new { id = commandsViewModel.SingleCommand.Id });
 
             }
 

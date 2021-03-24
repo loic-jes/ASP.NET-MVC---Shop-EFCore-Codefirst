@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Shop_EFCore_Codefirst.Models.Command>
+﻿@model Shop_EFCore_Codefirst.ViewModels.CommandsViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -17,16 +17,16 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>*@
             <th>
-                @Html.DisplayNameFor(model => model.ValidationDate)
+                @Html.DisplayNameFor(model => model.Commands.First().ValidationDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomerId)
+                @Html.DisplayNameFor(model => model.Commands.First().CustomerId)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Commands) {
         <tr>
             @*<td>
                 @Html.DisplayFor(modelItem => item.Id)
@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.ValidationDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CustomerId)
+                @Html.DisplayFor(modelItem => Model.Customers.First(x => x.Id == item.CustomerId).Name) 
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit", new {  id=item.Id }) |
